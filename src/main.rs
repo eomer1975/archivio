@@ -5,8 +5,8 @@ mod console_utils;
 use std::fs::File;
 use std::io;
 
-use data::available_functions;
-use data::test_data;
+use data::AvailableFunctions;
+use data::FunctionLabel;
 use files_io::get_file_list2;
 use files_io::read_file_content;
 use numbers::to_uint;
@@ -20,26 +20,28 @@ fn main() {
     let mut state = State { file: None };
     loop {
         clear_console();
-        println!("Start....");
-        match test_data("test") {
-            Ok(result) => println!("{}", result),
-            Err(error) => println!("Errore: {}", error),
-        }
 
         println!("Scegli una funzione");
 
-        let functions = available_functions();
         let mut selected_fn = String::new();
 
-        match test_data(functions.first().unwrap()) {
-            Ok(result) => println!("OK"),
-            Err(error) => println!("Errore: {}", error),
+
+        let functions2 = [
+            AvailableFunctions::ListaArchivi,
+            AvailableFunctions::AariArchivio,
+            AvailableFunctions::EliminaArchivio,
+            AvailableFunctions::InviaArchivio
+        ];
+
+        for (index, function) in functions2.iter().enumerate() {
+            println!("{}: {}", index, function.label());
         }
 
-        for (index, function) in functions.iter().enumerate() {
-            println!("{}: {}", index + 1, function);
-        }
-        println!("Per uscire: {:?}", functions.len() + 1);
+        // for (index, function) in functions.iter().enumerate() {
+        //     println!("{}: {}", index + 1, function);
+        // }
+
+        println!("Per uscire: {:?}", functions2.len() + 1);
 
         io::stdin()
             .read_line(&mut selected_fn)
@@ -63,7 +65,7 @@ fn main() {
 
         }
 
-        if numero == functions.len() + 1 {
+        if numero == functions2.len() + 1 {
             println!("Uscita dal programma...");
             break;
         }

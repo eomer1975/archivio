@@ -6,6 +6,7 @@ use std::fs::File;
 use std::io;
 
 use data::available_functions;
+use data::test_data;
 use files_io::get_file_list2;
 use files_io::read_file_content;
 use numbers::to_uint;
@@ -19,10 +20,21 @@ fn main() {
     let mut state = State { file: None };
     loop {
         clear_console();
+        println!("Start....");
+        match test_data("test") {
+            Ok(result) => println!("{}", result),
+            Err(error) => println!("Errore: {}", error),
+        }
+
         println!("Scegli una funzione");
 
-        let functions: Vec<String> = available_functions();
+        let functions = available_functions();
         let mut selected_fn = String::new();
+
+        match test_data(functions.first().unwrap()) {
+            Ok(result) => println!("OK"),
+            Err(error) => println!("Errore: {}", error),
+        }
 
         for (index, function) in functions.iter().enumerate() {
             println!("{}: {}", index + 1, function);

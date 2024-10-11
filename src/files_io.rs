@@ -62,10 +62,10 @@ pub fn read_file_content_no_error(file: &mut File) -> io::Result<String> {
     Ok(contenuto)
 }
 
-pub fn read_file_content(file: &mut File) -> io::Result<String> {
+pub fn read_file_content(file: &File) -> io::Result<String> {
     let mut contenuto = String::new();
     
-    match file.read_to_string(&mut contenuto) {
+    match file.try_clone().unwrap().read_to_string(&mut contenuto) {
         Ok(_) => Ok(contenuto),
         Err(e) => {
             eprintln!("Errore durante la lettura del file: {}", e);

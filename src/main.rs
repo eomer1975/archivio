@@ -2,8 +2,6 @@ mod data;
 mod files_io;
 mod numbers;
 mod console_utils;
-use std::borrow::Borrow;
-use std::borrow::BorrowMut;
 use std::fs::File;
 use std::io;
 
@@ -98,7 +96,7 @@ fn file_list() -> Option<File> {
 
 
 pub fn get_file_content(state: &mut State) -> String { 
-    if let Some(file) =  state.file.borrow_mut() { 
+    if let Some(file) =  &state.file { 
         match read_file_content(file) {
             Ok(c) => {
                 println!("{}", c);

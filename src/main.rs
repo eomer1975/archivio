@@ -1,13 +1,17 @@
 mod data;
 mod files_io;
 mod numbers;
+mod console_utils;
+use std::borrow::Borrow;
+use std::borrow::BorrowMut;
 use std::fs::File;
 use std::io;
 
 use data::available_functions;
 use files_io::get_file_list2;
-use numbers::to_int;
+use files_io::read_file_content;
 use numbers::to_uint;
+use console_utils::clear_console;
 
 struct State {
     file: Option<File>,
@@ -16,6 +20,7 @@ struct State {
 fn main() {
     let mut state = State { file: None };
     loop {
+        clear_console();
         println!("Scegli una funzione");
 
         let functions: Vec<String> = available_functions();
@@ -39,6 +44,13 @@ fn main() {
         if numero == 1 {
             state.file = file_list();
             println!("File selezionato: {:?}", state.file);
+            get_file_content(&mut state);
+
+            let mut selected_fn = String::new();
+            io::stdin()
+            .read_line(&mut selected_fn)
+            .expect("Failed to read line");
+
         }
 
         if numero == functions.len() + 1 {
@@ -81,5 +93,24 @@ fn file_list() -> Option<File> {
     match file {
         Some(f) => Some(f.try_clone().expect("Errore nella clonazione del file")), // Restituisce una copia del file
         None => None,
+    }
+}
+
+
+pub fn get_file_content(state: &mut State) -> String { 
+    if let Some(file) =  state.file.borrow_mut() { 
+        match read_file_content(file) {
+            Ok(c) => {
+                println!("{}", c);
+                c
+            },
+            Err(e) => {
+                eprintln!("Errore durante la lettura del file: {}", e);
+                String::new()
+            }
+        }
+    } else {
+        eprintln!("Nessun file disponibile.");
+        String::new() // Restituisci una stringa vuota se non c'è un file
     }
 }

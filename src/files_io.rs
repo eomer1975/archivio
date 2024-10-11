@@ -1,4 +1,5 @@
 use std::fs::{self, File};
+use std::io::{self, Read};
 use std::path::PathBuf;
 
 pub fn get_file_list(dir: &PathBuf) -> Vec<String> {
@@ -53,4 +54,22 @@ pub fn get_file_list2(dir: &PathBuf) -> Vec<File> {
     }
 
     file_list // Restituisci il vettore con i file
+}
+
+pub fn read_file_content_no_error(file: &mut File) -> io::Result<String> {
+    let mut contenuto = String::new();
+    file.read_to_string(&mut contenuto)?;
+    Ok(contenuto)
+}
+
+pub fn read_file_content(file: &mut File) -> io::Result<String> {
+    let mut contenuto = String::new();
+    
+    match file.read_to_string(&mut contenuto) {
+        Ok(_) => Ok(contenuto),
+        Err(e) => {
+            eprintln!("Errore durante la lettura del file: {}", e);
+            Err(e)
+        }
+    }
 }
